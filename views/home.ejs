@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <form action="/home" method="GET">
+        <input type="text" name="namee" id="search-input" />
+        <button type="submit">search</button>
+        </form>
+        <ul style="list-style-type:none;">
+            <li>fffff  <%= searchOptions %></li>
+            <% for(let i = 0; i < result.length; i++) {%>
+            <li><%= extractName[i] %></li> <button data-getID="<%= idFromSchema %>" class="delete-book">delete</button>
+            <% } %>
+        </ul>
+    </div>
+
+    <script>
+
+        let deleteBtn = document.querySelector(".delete-book")
+        let getId = deleteBtn.getAttribute("data-getID")
+
+        deleteBtn.addEventListener("click", (eo) => {
+
+            
+        })
+
+      
+
+    </script>
+</body>
+</html>

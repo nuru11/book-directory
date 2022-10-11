@@ -1,0 +1,57 @@
+As you can see, these search results are much more refined. We’ve reduced our search results by 50% and, when you consider how small our list is, this could really impact the size of search results when given a much larger list. Our improved results can be attributed to the function checkName().
+
+checkName = (name, str) => {
+    var pattern = str.split("").map((x)=>{
+        return `(?=.*${x})`
+    }).join("");
+    var regex = new RegExp(`${pattern}`, "g")
+    return name.match(regex);
+}
+Let’s break this down.
+
+?= is a positive lookahead.
+
+. matches any character except line break.
+
+* matches zero or more instances of a character.
+
+() is a capturing group, which is used to group characters together in a regular expression so that we can apply other operators (?=.*).
+
+g is the global modifier which performs a global search of the string looking for matches. You could also add i to g to make it an insensitive (not case sensitive) search as well, but in my case I have already converted the input and character name to lowercase letters, so the g modifier is sufficient.
+
+This function splits our user input, iterates over the characters and uses string interpolation to add each letter to the (?=.*) regex after the asterisk. Once we have an array of regex patterns, we join all items in the array to create a larger regex pattern that encompasses all letters. From that we can use new RegExp to create a regular expression from the joined patterns.
+
+The individual patterns we’ve created for each letter will match any strings that contain that letter. Combining them will apply all of the individual capturing groups to overall pattern, making them all matchable patterns for the string. This is will compensate for where .includes(str) falls short.
+
+If the user is trying to find ‘Kelly’, but types in ‘e’ as the first letter by mistake. x.toLowerCase().includes(str) will work, but then if the user continues typing and types ‘k’ next, the previous check won’t work.
+
+
+There’s always a theme.
+If we pass ‘ek’ to checkName() we can create the regex (?=.*e)(?=.*k) which will match a string containing ‘e’ and ‘k’ regardless of order. We apply that regex to the first three letters of ‘kelly’, which is also passed to the function as name. Then .match() will return true if the regex is met. Otherwise it will return false.
+
+Now that we know what we are trying to accomplish and how to do it, let’s look at our revised onKeyUp() function.
+
+onKeyUp = () => {
+   var str = event.target.value.toLowerCase().substring(0, 3)
+   var filteredArr = office.filter((x)=>{
+      var xSub = x.substring(0, 3).toLowerCase()
+      return x.toLowerCase().includes(str) || checkName(xSub, str)
+   })
+    if (filteredArr.length > 0){
+      appendNodes(filteredArr)
+    } else {
+      appendNodes("no results")
+    }
+}
+We use substring() to take the first three letters of the input and the character’s name. Then we check if x.toLowerCase().includes(str) is true. If it is, we skip the regex validation because .includes() is a more accurate match since its literally part of the character name, order and character wise. If x.toLowerCase().includes(str) is false, we use checkName() to apply our regex validation. This will improve the user’s search results without being too strict and without compromising the accuracy of the overall search.
+
+
+
+
+
+
+
+let searchOptions = {}
+    if (req.query.namee != null && req.query.namee !== '') {
+      searchOptions.namee = new RegExp(req.query.namee, 'i')
+    }
